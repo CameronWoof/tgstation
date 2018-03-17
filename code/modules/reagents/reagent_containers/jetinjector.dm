@@ -1,6 +1,6 @@
 /obj/item/reagent_containers/jetinjector
 	name = "jet injector"
-	desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges."
+	desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges." // We let the player know they can't just pour reagents in.
 	icon = 'icons/obj/chemical.dmi'
 	item_state = "jetinjector"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
@@ -45,6 +45,7 @@
 
 /obj/item/reagent_containers/jetinjector/attack(mob/M, mob/user, def_zone)
 	var/contained = jetcart.reagents.log_list()
+	var/fraction = min(inj_amount/reagents.total_volume, 1)
 	if (!jetcart)
 		to_chat(user, "<span class='notice'>There's no cartridge loaded in \the [src].</span>")
 		return
@@ -54,6 +55,7 @@
 	if (ismob(M))
 		M.visible_message("<span class='notice'>[user] injects [M] with \the [src].</span>")
 		add_logs(user, M, "injected", src, addition="which had [contained]")
+		jetcart.reagents.reaction(M, INJECT, fraction)
 		jetcart.reagents.trans_to(M, inj_amount)
 		to_chat(user, "<span class='notice'>You inject [inj_amount] units of \the [jetcart]'s contents. It now contains [jetcart.reagents.total_volume] units.</span>")
 		playsound(M.loc, 'sound/weapons/gun_slide_lock_1.ogg', 80, 0)
@@ -63,23 +65,23 @@
 	update_desc()
 
 /obj/item/reagent_containers/jetinjector/update_icon()
-	cut_overlays()	
+	cut_overlays()
 	if (jetcart)
-		var/c_volume = jetcart.reagents.total_volume
-		add_overlay("over_[cartcolor]")
+		var/c_volume = jetcart.reagents.total_volume // Since we know that the injection amount and possible volumes are static, we can skip some math.
+		add_overlay("over_[cartcolor]") 
 		add_overlay("jetinjector_[c_volume]")
 
 /obj/item/reagent_containers/jetinjector/proc/update_desc() // We provide the player with information about the cartridge only when there actually is one.
 	if (!jetcart)
-		desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges." // We ensure that the player knows they can't just pour reagents into the injector.
+		desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges." 
 	if (jetcart)
-		desc = "A reloadable, cartridge-based chemical injector. It is loaded with a [jetcart]. The volume light indicates that there are [jetcart.reagents.total_volume] units left."
+		desc = "A reloadable, cartridge-based chemical injector. It is loaded with a [jetcart]. The volume light indicates that the cartridge has [jetcart.reagents.total_volume] units left."
 
 // Cartridges
 
 /obj/item/reagent_containers/jetcart
 	name = "injector cartridge"
-	desc = "A disposable chemical cartridge, used with jet injectors. Bane of janitors company-wide."
+	desc = "A disposable chemical cartridge, used with jet injectors. Bane of janitors company-wide." // The prefilled cartridges give gameplay hints in their description.
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "cartred"
 	volume = 40
