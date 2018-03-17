@@ -10,7 +10,7 @@
 	var/cartcolor = null
 	var/inj_amount = 10
 
-/obj/item/reagent_containers/jetinjector/attack_self(mob/user)
+/obj/item/reagent_containers/jetinjector/attack_self(mob/user) // This is to avoid changing the injection amount.
 	return
 
 /obj/item/reagent_containers/jetinjector/attackby(obj/item/C, mob/user, params)
@@ -19,18 +19,18 @@
 	if (jetcart)
 		to_chat(user, "<span class='notice'>\The [src] already has a cartridge loaded.</span>")
 		return
-	if (!user.transferItemToLoc(C, src))
+	if (!user.transferItemToLoc(C, src)) // The cartridge attempts to go inside the jet injector; if it fails, the proc ends.
 		return
 
 	jetcart = C
 	cartcolor = C.icon_state
 	to_chat(user, "<span class='notice'>\The [jetcart] clicks into place.</span>")
 	playsound(loc ,"sound/weapons/gun_magazine_insert_full_1.ogg", 80, 0)
-	update_icon()
+	update_icon() // These procs are used because the icon and description both change with cart events.
 	update_desc()
 
 /obj/item/reagent_containers/jetinjector/attack_hand(mob/user)
-	if(!user.is_holding(src))
+	if(!user.is_holding(src)) // This check keeps the cartridges from ejecting when the injector is in the user's pocket.
 		..()
 		return
 	if(jetcart)
@@ -48,7 +48,7 @@
 	if (!jetcart)
 		to_chat(user, "<span class='notice'>There's no cartridge loaded in \the [src].</span>")
 		return
-	if (!jetcart.reagents.total_volume)
+	if (!jetcart.reagents.total_volume) 
 		to_chat(user, "<span class='notice'>\The [jetcart] is empty!</span>")
 		return
 	if (ismob(M))
@@ -69,9 +69,9 @@
 		add_overlay("over_[cartcolor]")
 		add_overlay("jetinjector_[c_volume]")
 
-/obj/item/reagent_containers/jetinjector/proc/update_desc()
+/obj/item/reagent_containers/jetinjector/proc/update_desc() // We provide the player with information about the cartridge only when there actually is one.
 	if (!jetcart)
-		desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges."
+		desc = "A reloadable, cartridge-based chemical injector. Accepts pre-filled, proprietary cartridges." // We ensure that the player knows they can't just pour reagents into the injector.
 	if (jetcart)
 		desc = "A reloadable, cartridge-based chemical injector. It is loaded with a [jetcart]. The volume light indicates that there are [jetcart.reagents.total_volume] units left."
 
@@ -83,9 +83,9 @@
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "cartred"
 	volume = 40
-	container_type = TRANSPARENT
+	container_type = TRANSPARENT 
 
-/obj/item/reagent_containers/jetcart/attack_self(mob/user)
+/obj/item/reagent_containers/jetcart/attack_self(mob/user) // Same as before.
 	return
 
 /obj/item/reagent_containers/jetcart/neuro
