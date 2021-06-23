@@ -145,8 +145,6 @@
         "INVISIBLE",
         "PAINFUL",
         "HARMFUL",
-        "HOMOSEXUAL",
-        "HETEROSEXUAL",
         "SEXUAL",
         "BLOODY",
         "COLORFUL",
@@ -838,6 +836,7 @@
         "GOLEMS",
         "SHADOW PEOPLE",
         "CHANGELINGS"
+        "MOTHMEN"
     ],
     "ionthings": [
         "ABSENCE OF CYBORG HUGS",
